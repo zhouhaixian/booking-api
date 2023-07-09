@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.zhouhaixian.bookingapi.mapper.UserMapper">
+    <sql id="insertUserColumns">
+        name, password, phone, gender, subject, role, created_at, updated_at
+    </sql>
+
+    <sql id="userColumns">
+        id, <include refid="insertUserColumns" />
+    </sql>
+    
+    <insert id="insertUser" parameterType="User" keyProperty="id">
+        insert into user (<include refid="insertUserColumns" />)
+        values (#{name}, #{password}, #{phone}, #{gender}, #{subject}, #{role}, current_timestamp, current_timestamp)
+    </insert>
+
+    <select id="findUserByPhone" parameterType="String" resultType="User">
+        select <include refid="userColumns" />
+        from user
+        where phone = #{phone}
+    </select>
+
+    <select id="findUserByRole" resultType="User">
+        select <include refid="userColumns" />
+        from user
+        where role = #{role}
+    </select>
+
+    <select id="findAll" resultType="User">
+        select <include refid="userColumns" />
+        from user
+    </select>
+    
+    <update id="updateUser">
+        update user
+        <set>
+            <if test="user.name != null">name=#{user.name},</if>
+            <if test="user.password != null">password=#{user.password},</if>
+            <if test="user.phone != null">phone=#{user.phone},</if>
+            <if test="user.gender != null">gender=#{user.gender}</if>
+            <if test="user.subject != null">subject=#{user.subject},</if>
+            <if test="user.role != null">role=#{user.role},</if>
+            updated_at=current_timestamp
+        </set>
+        where phone=#{current_phone, jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteUser">
+        delete from user where phone=#{phone}
+    </delete>
+</mapper>

@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  profiles:
+    active: dev
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:sql/schema.sql
+
+mybatis:
+  mapper-locations: classpath:mapper/*
+  type-aliases-package: cn.zhouhaixian.bookingapi.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+application:
+  name: @project.name@
+  version: @project.version@
+  project-url: "https://github.com/zhouhaixian/booking"
+  license: "GPL-3.0"
+  description: "录播室预约管理系统.后端"
+  author:
+    name: Zhou Haixian
+    email: haixian.zhou@outlook.com
+    github: "https://github.com/zhouhaixian"
+
+server:
+  servlet:
+    context-path: /api
+
+jwt:
+  secret: The_electric_light_that_jumps_at_your_fingertips_is_my_unchanging_belief_in_this_life,_only_my_Railgun_will_last_forever!!!

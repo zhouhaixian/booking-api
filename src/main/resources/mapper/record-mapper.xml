@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.zhouhaixian.bookingapi.mapper.RecordMapper">
+    <sql id="insertRecordColumns">
+        name, phone, grade, class, subject, record_index, start_time, end_time, created_at
+    </sql>
+
+    <sql id="recordColumns">
+        id, <include refid="insertRecordColumns" />
+    </sql>
+
+    <sql id="recordIndexAndYMD">
+        record_index = #{locator} and date_format(start_time, '%y%m%d') = date_format(#{startTime}, '%y%m%d')
+    </sql>
+    
+    <resultMap id="recordResultMap" type="Record">
+        <result property="classNumber" column="class" />
+        <result property="locator" column="record_index" />
+    </resultMap>
+
+    <insert id="insertRecord">
+        insert into record (<include refid="insertRecordColumns" />)
+        values (#{name}, #{phone}, #{grade}, #{classNumber}, #{subject}, #{locator}, #{startTime}, #{endTime}, current_timestamp)
+    </insert>
+    
+    <select id="findRecordsWithTimeRangeAndPhone" resultMap="recordResultMap">
+        select <include refid="recordColumns" />
+        from record
+        where start_time between #{startTime} and #{endTime}
+        and phone = #{phone}
+    </select>
+
+    <select id="findRecordsBetweenTimeRange" resultMap="recordResultMap">
+        select <include refid="recordColumns" />
+        from record
+        where start_time between #{startTime} and #{endTime}
+    </select>
+
+    <select id="findRecordByLocatorAndStartTime" resultMap="recordResultMap">
+        select <include refid="recordColumns" />
+        from record
+        where <include refid="recordIndexAndYMD"/>
+    </select>
+
+    <delete id="deleteRecord">
+        delete from record
+        where <include refid="recordIndexAndYMD"/>
+    </delete>
+</mapper>
