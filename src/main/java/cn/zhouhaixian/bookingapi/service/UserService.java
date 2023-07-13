@@ -1,5 +1,8 @@
 package cn.zhouhaixian.bookingapi.service;
 
+import cn.zhouhaixian.bookingapi.dto.CreateUserDTO;
+import cn.zhouhaixian.bookingapi.dto.UpdateUserDTO;
+import cn.zhouhaixian.bookingapi.dto.UserProfileDTO;
 import cn.zhouhaixian.bookingapi.entity.User;
 import cn.zhouhaixian.bookingapi.exception.UserNotFoundException;
 import cn.zhouhaixian.bookingapi.mapper.UserMapper;
@@ -23,12 +26,16 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void create(@NotNull User user) throws IllegalArgumentException {
-        Objects.requireNonNull(user);
-        if (!isUserExist(user.getPhone())) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public UserProfileDTO create(@NotNull CreateUserDTO createUserDTO) throws IllegalArgumentException {
+        Objects.requireNonNull(createUserDTO);
+        if (!isUserExist(createUserDTO.getPhone())) {
+            User user = cn.zhouhaixian.bookingapi.dto.mapper.UserMapper
+                    .INSTANCE.createUserDTOToUser(createUserDTO);
+            user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
             user.setRole(hasAdmin() ? User.Role.USER : User.Role.ADMIN);
             userMapper.insertUser(user);
+            return cn.zhouhaixian.bookingapi.dto.mapper.UserMapper
+                    .INSTANCE.userToUserProfileDTO(user);
         } else {
             throw new IllegalArgumentException("手机号已被使用");
         }
@@ -54,12 +61,16 @@ public class UserService {
         return userMapper.findAll();
     }
 
-    public void update(@NotNull String phone, @NotNull User user) throws UserNotFoundException, IllegalArgumentException {
+    public void update(@NotNull String phone, @NotNull UpdateUserDTO updateUserDTO) throws UserNotFoundException, IllegalArgumentException {
         Objects.requireNonNull(phone);
-        Objects.requireNonNull(user);
+        Objects.requireNonNull(updateUserDTO);
         if (!isUserExist(phone)) throw new UserNotFoundException();
-        if (Objects.nonNull(user.getPassword())) user.setPassword(passwordEncoder.encode(user.getPassword()));
-        if (isUserExist(user.getPhone())) throw new IllegalArgumentException("手机号已被使用");
+
+        User user = cn.zhouhaixian.bookingapi.dto.mapper.UserMapper
+                .INSTANCE.updateUserDTOToUser(updateUserDTO);
+        if (Objects.nonNull(updateUserDTO.getPassword())) user.setPassword(passwordEncoder.encode(updateUserDTO.getPassword()));
+        if (Objects.nonNull(updateUserDTO.getPhone()) && isUserExist(updateUserDTO.getPhone()))
+            throw new IllegalArgumentException("手机号已被使用");
         userMapper.updateUser(phone, user);
     }
 

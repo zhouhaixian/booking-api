@@ -2,13 +2,17 @@ package cn.zhouhaixian.bookingapi.controller;
 
 import cn.zhouhaixian.bookingapi.dto.CreateRecordDTO;
 import cn.zhouhaixian.bookingapi.dto.DeleteRecordDTO;
-import cn.zhouhaixian.bookingapi.dto.mapper.RecordMapper;
 import cn.zhouhaixian.bookingapi.entity.Record;
 import cn.zhouhaixian.bookingapi.service.RecordService;
+import cn.zhouhaixian.bookingapi.utils.AdminOrOwnerAuthenticator;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "RecordController", description = "预约记录")
 @RestController
@@ -22,9 +26,27 @@ public class RecordController {
 
     @PostMapping("")
     public CreateRecordDTO create(@RequestBody @Valid CreateRecordDTO createRecordDTO) {
-        Record record = RecordMapper.INSTANCE.createRecordDTOToRecord(createRecordDTO);
-        recordService.create(record);
+        recordService.create(createRecordDTO);
         return createRecordDTO;
+    }
+
+    @GetMapping("schedule")
+    public List<Record> findSevenDays() {
+        return recordService.findSevenDays();
+    }
+
+    @SneakyThrows
+    @GetMapping("{phone}")
+    public List<Record> findByPhone(@PathVariable String phone) {
+        AdminOrOwnerAuthenticator adminOrOwnerAuthenticator = new AdminOrOwnerAuthenticator();
+        adminOrOwnerAuthenticator.authenticate(phone);
+        return recordService.findByPhone(phone);
+    }
+
+    @GetMapping("all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<Record> findAll() {
+        return recordService.findAll();
     }
 
     @DeleteMapping("")

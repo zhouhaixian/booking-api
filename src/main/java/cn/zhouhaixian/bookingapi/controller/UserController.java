@@ -1,7 +1,7 @@
 package cn.zhouhaixian.bookingapi.controller;
 
-import cn.zhouhaixian.bookingapi.dto.UpdateUserDTO;
 import cn.zhouhaixian.bookingapi.dto.CreateUserDTO;
+import cn.zhouhaixian.bookingapi.dto.UpdateUserDTO;
 import cn.zhouhaixian.bookingapi.dto.UserProfileDTO;
 import cn.zhouhaixian.bookingapi.dto.mapper.UserMapper;
 import cn.zhouhaixian.bookingapi.entity.User;
@@ -30,10 +30,7 @@ public class UserController {
 
     @PostMapping("/register")
     public UserProfileDTO register(@Valid @RequestBody CreateUserDTO createUserDTO) {
-        User user = UserMapper.INSTANCE.createUserDTOToUser(createUserDTO);
-
-        userService.create(user);
-        return UserMapper.INSTANCE.userToUserProfileDTO(user);
+        return userService.create(createUserDTO);
     }
 
     @SneakyThrows
@@ -64,8 +61,7 @@ public class UserController {
         if (!adminOrOwnerAuthenticator.isAdmin() && Objects.nonNull(updateUserDTO.getRole())) {
             throw new IllegalArgumentException("非管理员不可修改用户角色");
         }
-        User user = UserMapper.INSTANCE.updateUserDTOToUser(updateUserDTO);
-        userService.update(phone, user);
+        userService.update(phone, updateUserDTO);
     }
 
     @SneakyThrows

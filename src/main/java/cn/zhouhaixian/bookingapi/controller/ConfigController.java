@@ -3,7 +3,6 @@ package cn.zhouhaixian.bookingapi.controller;
 import cn.zhouhaixian.bookingapi.dto.InitializeConfigDTO;
 import cn.zhouhaixian.bookingapi.dto.UpdateConfigDTO;
 import cn.zhouhaixian.bookingapi.dto.mapper.ConfigurationsMapper;
-import cn.zhouhaixian.bookingapi.entity.Configurations;
 import cn.zhouhaixian.bookingapi.service.ConfigService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -24,16 +23,14 @@ public class ConfigController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("")
     public InitializeConfigDTO initialize(@Valid @RequestBody InitializeConfigDTO initializeConfigDTO) {
-        Configurations configurations = ConfigurationsMapper.INSTANCE.initializeConfigDTOToConfigurations(initializeConfigDTO);
-        configService.initialize(configurations);
+        configService.initialize(initializeConfigDTO);
         return initializeConfigDTO;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("")
     public void update(@Valid @RequestBody UpdateConfigDTO updateConfigDTO) {
-        Configurations configurations = ConfigurationsMapper.INSTANCE.updateConfigDTOToConfigurations(updateConfigDTO);
-        configService.update(configurations);
+        configService.update(updateConfigDTO);
     }
 
     @GetMapping("")

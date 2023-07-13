@@ -1,5 +1,8 @@
 package cn.zhouhaixian.bookingapi.service;
 
+import cn.zhouhaixian.bookingapi.dto.InitializeConfigDTO;
+import cn.zhouhaixian.bookingapi.dto.UpdateConfigDTO;
+import cn.zhouhaixian.bookingapi.dto.mapper.ConfigurationsMapper;
 import cn.zhouhaixian.bookingapi.entity.Configuration;
 import cn.zhouhaixian.bookingapi.entity.Configurations;
 import cn.zhouhaixian.bookingapi.exception.ConfigurationNotFoundException;
@@ -21,9 +24,10 @@ public class ConfigService {
         this.configMapper = configMapper;
     }
 
-    public void initialize(@NotNull Configurations configurations) throws DuplicateInitializationException {
-        Objects.requireNonNull(configurations);
+    public void initialize(@NotNull InitializeConfigDTO initializeConfigDTO) throws DuplicateInitializationException {
+        Objects.requireNonNull(initializeConfigDTO);
         if (!hasConfiguration()) {
+            Configurations configurations = ConfigurationsMapper.INSTANCE.initializeConfigDTOToConfigurations(initializeConfigDTO);
             configMapper.insertConfig(configurations.toList());
         } else {
             throw new DuplicateInitializationException();
@@ -39,9 +43,10 @@ public class ConfigService {
         }
     }
 
-    public void update(@NotNull Configurations configurations) throws ConfigurationNotFoundException {
-        Objects.requireNonNull(configurations);
+    public void update(@NotNull UpdateConfigDTO updateConfigDTO) throws ConfigurationNotFoundException {
+        Objects.requireNonNull(updateConfigDTO);
         if (!hasConfiguration()) throw new ConfigurationNotFoundException();
+        Configurations configurations = ConfigurationsMapper.INSTANCE.updateConfigDTOToConfigurations(updateConfigDTO);
         configMapper.updateConfig(configurations.toList());
     }
 

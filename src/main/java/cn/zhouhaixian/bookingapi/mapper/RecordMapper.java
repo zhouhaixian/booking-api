@@ -17,5 +17,9 @@ public interface RecordMapper {
 
     Record findRecordByLocatorAndStartTime(int locator, LocalDateTime startTime);
 
+    List<Record> findRecordsByPhone(String phone);
+
+    List<Record> findAll();
+
     void deleteRecord(DeleteRecordDTO deleteRecordDTO);
 }

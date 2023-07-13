@@ -44,6 +44,17 @@
         where <include refid="recordIndexAndYMD"/>
     </select>
 
+    <select id="findRecordByPhone" resultMap="recordResultMap">
+        select <include refid="recordColumns" />
+        from record
+        where id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="recordResultMap">
+        select <include refid="recordColumns" />
+        from record
+    </select>
+
     <delete id="deleteRecord">
         delete from record
         where <include refid="recordIndexAndYMD"/>
