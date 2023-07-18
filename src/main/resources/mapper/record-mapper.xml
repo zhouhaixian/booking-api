@@ -44,15 +44,28 @@
         where <include refid="recordIndexAndYMD"/>
     </select>
 
-    <select id="findRecordByPhone" resultMap="recordResultMap">
+    <select id="findRecordsByPhone" resultMap="recordResultMap">
         select <include refid="recordColumns" />
         from record
-        where id = #{id}
+        where phone = #{phone}
     </select>
 
     <select id="findAll" resultMap="recordResultMap">
         select <include refid="recordColumns" />
         from record
+        <where>
+            <if test="name != null">and name=#{name}</if>
+            <if test="phone != null">and phone=#{phone}</if>
+            <if test="grade != null">and grade=#{grade}</if>
+            <if test="classNumber != null">and class=#{classNumber}</if>
+            <if test="subject != null">and lower(subject) like lower(concat('%', #{subject}, '%'))</if>
+            <if test="locators != null">
+                and
+                <foreach collection="locators" item="locator" index="index" open=" (" separator=" or " close=") ">
+                    record_index = #{locator}
+                </foreach>
+            </if>
+        </where>
     </select>
 
     <delete id="deleteRecord">

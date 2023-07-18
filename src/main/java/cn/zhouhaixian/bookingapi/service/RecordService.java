@@ -2,6 +2,7 @@ package cn.zhouhaixian.bookingapi.service;
 
 import cn.zhouhaixian.bookingapi.dto.CreateRecordDTO;
 import cn.zhouhaixian.bookingapi.dto.DeleteRecordDTO;
+import cn.zhouhaixian.bookingapi.dto.RecordDTO;
 import cn.zhouhaixian.bookingapi.entity.Record;
 import cn.zhouhaixian.bookingapi.exception.DuplicateBookingException;
 import cn.zhouhaixian.bookingapi.exception.FrequentBookingException;
@@ -51,14 +52,15 @@ public class RecordService {
         }
     }
 
-    public List<Record> findByPhone(@NotNull String phone) {
+    public List<RecordDTO> findByPhone(@NotNull String phone) {
         Objects.requireNonNull(phone);
-        return recordMapper.findRecordsByPhone(phone);
+        return recordMapper.findRecordsByPhone(phone).stream()
+                .map(cn.zhouhaixian.bookingapi.dto.mapper.RecordMapper.INSTANCE::recordToRecordDTO).toList();
     }
 
 
-    public List<Record> findAll() {
-        return recordMapper.findAll();
+    public List<RecordDTO> findAll(String name, String phone, String grade, Integer classNumber, String subject, Integer[] locators) {
+        return recordMapper.findAll(name, phone, grade, classNumber, subject, locators).stream().map(cn.zhouhaixian.bookingapi.dto.mapper.RecordMapper.INSTANCE::recordToRecordDTO).toList();
     }
 
     public void delete(@NotNull DeleteRecordDTO deleteRecordDTO) throws IllegalAccessException {
@@ -93,9 +95,10 @@ public class RecordService {
         return recordMapper.findRecordsWithTimeRangeAndPhone(currentTime, sevenDaysLater, phone);
     }
 
-    public List<Record> findSevenDays() {
+    public List<RecordDTO> findSevenDays() {
         LocalDateTime currentTime = LocalDateTime.now();
         LocalDateTime sevenDaysLater = currentTime.plusDays(7);
-        return recordMapper.findRecordsBetweenTimeRange(currentTime, sevenDaysLater);
+        return recordMapper.findRecordsBetweenTimeRange(currentTime, sevenDaysLater).stream()
+                .map(cn.zhouhaixian.bookingapi.dto.mapper.RecordMapper.INSTANCE::recordToRecordDTO).toList();
     }
 }

@@ -2,6 +2,7 @@ package cn.zhouhaixian.bookingapi.service;
 
 import cn.zhouhaixian.bookingapi.dto.CreateUserDTO;
 import cn.zhouhaixian.bookingapi.dto.UpdateUserDTO;
+import cn.zhouhaixian.bookingapi.dto.UserDTO;
 import cn.zhouhaixian.bookingapi.dto.UserProfileDTO;
 import cn.zhouhaixian.bookingapi.entity.User;
 import cn.zhouhaixian.bookingapi.exception.UserNotFoundException;
@@ -57,8 +58,8 @@ public class UserService {
         return !CollectionUtils.isEmpty(userMapper.findUserByRole(User.Role.ADMIN));
     }
 
-    public List<User> findAll() {
-        return userMapper.findAll();
+    public List<UserDTO> findAll(String name, String phone, User.Gender[] genders, User.Role[] roles, String subject) {
+        return userMapper.findAll(name, phone, genders, roles, subject).stream().map(cn.zhouhaixian.bookingapi.dto.mapper.UserMapper.INSTANCE::userToUserDTO).toList();
     }
 
     public void update(@NotNull String phone, @NotNull UpdateUserDTO updateUserDTO) throws UserNotFoundException, IllegalArgumentException {

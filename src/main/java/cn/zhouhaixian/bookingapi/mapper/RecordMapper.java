@@ -19,7 +19,7 @@ public interface RecordMapper {
 
     List<Record> findRecordsByPhone(String phone);
 
-    List<Record> findAll();
+    List<Record> findAll(String name, String phone, String grade, Integer classNumber, String subject, Integer[] locators);
 
     void deleteRecord(DeleteRecordDTO deleteRecordDTO);
 }

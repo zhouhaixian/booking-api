@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "ConfigController", description = "配置")
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/config")
 public class ConfigController {

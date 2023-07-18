@@ -2,6 +2,7 @@ package cn.zhouhaixian.bookingapi.controller;
 
 import cn.zhouhaixian.bookingapi.dto.CreateUserDTO;
 import cn.zhouhaixian.bookingapi.dto.UpdateUserDTO;
+import cn.zhouhaixian.bookingapi.dto.UserDTO;
 import cn.zhouhaixian.bookingapi.dto.UserProfileDTO;
 import cn.zhouhaixian.bookingapi.dto.mapper.UserMapper;
 import cn.zhouhaixian.bookingapi.entity.User;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Tag(name = "UserController", description = "用户管理")
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -42,6 +44,15 @@ public class UserController {
         return UserMapper.INSTANCE.userToUserProfileDTO(user);
     }
 
+    @SneakyThrows
+    @GetMapping("/info")
+    public UserProfileDTO getUserByPhone() {
+        AdminOrOwnerAuthenticator adminOrOwnerAuthenticator = new AdminOrOwnerAuthenticator();
+        String phone = adminOrOwnerAuthenticator.getPhone();
+        User user = userService.findUserByPhone(phone);
+        return UserMapper.INSTANCE.userToUserProfileDTO(user);
+    }
+
     @GetMapping("/has-admin")
     public boolean hasAdmin() {
         return userService.hasAdmin();
@@ -49,8 +60,12 @@ public class UserController {
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<User> getAllUsers() {
-        return userService.findAll();
+    public List<UserDTO> getAllUsers(@RequestParam(value = "name", required = false) String name,
+                                     @RequestParam(value = "phone", required = false) String phone,
+                                     @RequestParam(value = "gender[]", required = false) User.Gender[] genders,
+                                     @RequestParam(value = "role[]", required = false) User.Role[] roles,
+                                     @RequestParam(value = "subject", required = false) String subject) {
+        return userService.findAll(name, phone, genders, roles, subject);
     }
 
     @SneakyThrows

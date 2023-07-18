@@ -14,7 +14,7 @@ public interface UserMapper {
 
     List<User> findUserByRole(User.Role role);
 
-    List<User> findAll();
+    List<User> findAll(String name, String phone, User.Gender[] genders, User.Role[] roles, String subject);
 
     void updateUser(@Param("current_phone") String currentPhone, User user);
 

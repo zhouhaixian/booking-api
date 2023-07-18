@@ -2,6 +2,7 @@ package cn.zhouhaixian.bookingapi.controller;
 
 import cn.zhouhaixian.bookingapi.dto.CreateRecordDTO;
 import cn.zhouhaixian.bookingapi.dto.DeleteRecordDTO;
+import cn.zhouhaixian.bookingapi.dto.RecordDTO;
 import cn.zhouhaixian.bookingapi.entity.Record;
 import cn.zhouhaixian.bookingapi.service.RecordService;
 import cn.zhouhaixian.bookingapi.utils.AdminOrOwnerAuthenticator;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Tag(name = "RecordController", description = "预约记录")
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/record")
 public class RecordController {
@@ -31,13 +33,13 @@ public class RecordController {
     }
 
     @GetMapping("schedule")
-    public List<Record> findSevenDays() {
+    public List<RecordDTO> findSevenDays() {
         return recordService.findSevenDays();
     }
 
     @SneakyThrows
     @GetMapping("{phone}")
-    public List<Record> findByPhone(@PathVariable String phone) {
+    public List<RecordDTO> findByPhone(@PathVariable String phone) {
         AdminOrOwnerAuthenticator adminOrOwnerAuthenticator = new AdminOrOwnerAuthenticator();
         adminOrOwnerAuthenticator.authenticate(phone);
         return recordService.findByPhone(phone);
@@ -45,8 +47,13 @@ public class RecordController {
 
     @GetMapping("all")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Record> findAll() {
-        return recordService.findAll();
+    public List<RecordDTO> findAll(@RequestParam(value = "name", required = false) String name,
+                                @RequestParam(value = "phone", required = false) String phone,
+                                @RequestParam(value = "grade", required = false) String grade,
+                                @RequestParam(value = "class", required = false) Integer classNumber,
+                                @RequestParam(value = "subject", required = false) String subject,
+                                @RequestParam(value = "index[]", required = false) Integer[] locators) {
+        return recordService.findAll(name, phone, grade, classNumber, subject, locators);
     }
 
     @DeleteMapping("")

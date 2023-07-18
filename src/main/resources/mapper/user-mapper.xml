@@ -31,6 +31,23 @@
     <select id="findAll" resultType="User">
         select <include refid="userColumns" />
         from user
+        <where>
+            <if test="name != null">and name=#{name}</if>
+            <if test="phone != null">and phone=#{phone}</if>
+            <if test="genders != null">
+                and
+                <foreach collection="genders" item="gender" index="index" open=" (" separator=" or " close=") ">
+                    gender = #{gender}
+                </foreach>
+            </if>
+            <if test="roles != null">
+                and
+                <foreach collection="roles" item="role" index="index" open=" (" separator=" or " close=") ">
+                    role = #{role}
+                </foreach>
+            </if>
+            <if test="subject != null">and lower(subject) like lower(concat('%', #{subject}, '%'))</if>
+        </where>
     </select>
     
     <update id="updateUser">

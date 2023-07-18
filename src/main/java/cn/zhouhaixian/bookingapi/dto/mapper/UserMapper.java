@@ -2,6 +2,7 @@ package cn.zhouhaixian.bookingapi.dto.mapper;
 
 import cn.zhouhaixian.bookingapi.dto.UpdateUserDTO;
 import cn.zhouhaixian.bookingapi.dto.CreateUserDTO;
+import cn.zhouhaixian.bookingapi.dto.UserDTO;
 import cn.zhouhaixian.bookingapi.dto.UserProfileDTO;
 import cn.zhouhaixian.bookingapi.entity.User;
 import org.mapstruct.Mapper;
@@ -16,4 +17,6 @@ public interface UserMapper {
     UserProfileDTO userToUserProfileDTO(User user);
 
     User updateUserDTOToUser(UpdateUserDTO updateUserDTO);
+
+    UserDTO userToUserDTO(User user);
 }
